@@ -70,6 +70,15 @@ app.post('/api/users/login', (req, res) => {
     });
 });
 
+app.get('/api/users/logout', auth, (req, res) => {
+    User.findOneAndUpdate({ _id: req.user._id },
+        { token: "" },
+        (err, user) => {
+            if(err) return res.json({ success: false, err });
+            return res.status(200).json({ success: true });
+        });
+});
+
 app.get('/api/users/auth', auth, function(req, res) {
     // 미들웨어를 통과해서 여기까지 왔다는 것은 authentication이 성공했다는 의미
     res.status(200).json({
@@ -85,13 +94,5 @@ app.get('/api/users/auth', auth, function(req, res) {
     });
 });
 
-app.get('/api/users/logout', auth, (req, res) => {
-    User.findOneAndUpdate({ _id: req.user._id },
-        { token: "" },
-        (err, user) => {
-            if(err) return res.json({ success: false, err });
-            return res.status(200).json({ success: true });
-        });
-});
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
