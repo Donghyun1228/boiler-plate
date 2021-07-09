@@ -33,10 +33,10 @@ const userSchema = mongoose.Schema({
     }
 });
 
+// 비밀번호 암호화.
 userSchema.methods.encryptPassword = function(cb) {
     let user = this;
 
-    //비밀번호 암호화.
     bcrypt.genSalt(saltRounds, function(err, salt) {
         if (err) return cb(err);
 
@@ -52,7 +52,7 @@ userSchema.methods.encryptPassword = function(cb) {
 // 유저가 입력한 패스워드와 데이터베이스의 패스워드를 비교한 후 true/false를 콜백함수로 넘겨줌
 userSchema.methods.comparePassword = function(plainpassword, cb) {
     bcrypt.compare(plainpassword, this.password, function(err, isMatch) {
-        if(err) return cb(err)
+        if(err) return cb(err);
         cb(null, isMatch);
     });
 };
@@ -64,8 +64,20 @@ userSchema.methods.generateToken = function(cb) {
     let token = jwt.sign(user._id.toHexString(), 'secretToken');
     user.token = token;
     user.save(function(err, user) {
-        if(err) return cb(err)
+        if(err) return cb(err);
         cb(null, user);
+    });
+};
+
+// token을 이용해 유저를 찾음.
+userSchema.statics.findByToken = function(token, cb) {
+    let user = this;
+    jwt.verify(token, 'secretToken', function(err, decoded) {
+        if(err) return cb(err);
+        user.findOne({ "_id": decoded, "token": token }, function(err, user) {
+            if(err) return cb(err);
+            cb(null, user);
+        });
     });
 };
 
