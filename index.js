@@ -21,7 +21,7 @@ mongoose.connect(config.mongoURI, {
     useUnifiedTopology: true,
     useFindAndModify: false,
     useCreateIndex: true
-}).then(() => console.log('MongoDB Connected...')).catch(err => console.log(err))
+}).then(() => console.log('MongoDB Connected...')).catch(err => console.log(err));
 
 
 
@@ -40,7 +40,7 @@ app.post('/api/users/register', (req, res) => {
             });
         });
     });
-})
+});
 
 app.post('/api/users/login', (req, res) => {
     // 요청된 이메일이 데이터베이스에 있는 지 확인한다.
@@ -65,10 +65,10 @@ app.post('/api/users/login', (req, res) => {
                     .status(200)
                     .json( { loginSucess: true, userId: user._id });
             });
-        })
+        });
 
-    })
-})
+    });
+});
 
 app.get('/api/users/auth', auth, function(req, res) {
     // 미들웨어를 통과해서 여기까지 왔다는 것은 authentication이 성공했다는 의미
@@ -85,4 +85,13 @@ app.get('/api/users/auth', auth, function(req, res) {
     });
 });
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+app.get('/api/users/logout', auth, (req, res) => {
+    User.findOneAndUpdate({ _id: req.user._id },
+        { token: "" },
+        (err, user) => {
+            if(err) return res.json({ success: false, err });
+            return res.status(200).json({ success: true });
+        });
+});
+
+app.listen(port, () => console.log(`Example app listening on port ${port}!`));
