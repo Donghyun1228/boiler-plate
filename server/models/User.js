@@ -47,7 +47,7 @@ userSchema.methods.encryptPassword = function(cb) {
         });
         
     });
-}
+};
 
 // 유저가 입력한 패스워드와 데이터베이스의 패스워드를 비교한 후 true/false를 콜백함수로 넘겨줌
 userSchema.methods.comparePassword = function(plainpassword, cb) {

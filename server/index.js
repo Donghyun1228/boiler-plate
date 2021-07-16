@@ -63,7 +63,7 @@ app.post('/api/users/login', (req, res) => {
                 // 토큰을 쿠키에 저장한다.
                 res.cookie("x_auth", user.token)
                     .status(200)
-                    .json( { loginSucess: true, userId: user._id });
+                    .json({ loginSucess: true, userId: user._id });
             });
         });
 
