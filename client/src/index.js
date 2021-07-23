@@ -3,10 +3,32 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { Provider } from 'react-redux';
+import 'antd/dist/antd.css';
+
+import { applyMiddleware, createStore } from 'redux';
+// 리덕스에서 필요한 미들웨어
+import promiseMiddleware from 'redux-promise';
+import ReduxThunk from 'redux-thunk';
+
+// reducer 불러오기
+import Reducer from './_reducers'
+
+// redux store를 만드는 과정
+const createStoreWithMiddleware = applyMiddleware(promiseMiddleware,ReduxThunk)(createStore);
+
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    {/* Provider를 이용해 리덕스 적용 */}
+    <Provider 
+      store={createStoreWithMiddleware(Reducer,
+        window.__REDUX_DEVTOOLS_EXTENSTION__ &&
+        window.__REDUX_DEVTOOLS_EXTENSTION__()  
+      )}
+    >
+      <App />
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );
